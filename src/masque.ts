@@ -49,13 +49,12 @@ export function formatMasque(account: any): any {
     ipv6: account.config.interface.addresses.v6,
   };
 }
-
 export function formatMihomoMasque(account: any): string {
-  const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
   const config = {
-    name: `warp-masque-${timestamp}`,
+    name: "warp-masque",
     type: "masque",
     server: "masque.wdqgn.eu.org",
+...
     port: 443,
     "private-key": account.private_key,
     "public-key": cleanKey(account.config.peers[0].public_key),

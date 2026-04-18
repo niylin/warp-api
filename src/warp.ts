@@ -53,13 +53,12 @@ PublicKey = ${account.config.peers[0].public_key}
 AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = ${account.config.peers[0].endpoint.host}:2408\n`;
 }
-
 export function formatMihomoWg(account: any): string {
-  const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
   const config = {
-    name: `warp-wg-${timestamp}`,
+    name: "warp-wg",
     type: "wireguard",
     "private-key": cleanKey(account.private_key),
+...
     server: account.config.peers[0].endpoint.host.split(":")[0],
     port: 2408,
     ip: account.config.interface.addresses.v4,
