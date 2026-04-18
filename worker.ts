@@ -1,6 +1,3 @@
-// Cloudflare Worker for generating Warp/MASQUE configurations
-// Based on the usque project: https://github.com/Diniboy1123/usque
-
 const API_URL = "https://api.cloudflareclient.com";
 const API_VERSION = "v0a4471";
 const DEFAULT_HEADERS = {
