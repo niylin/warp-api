@@ -1,6 +1,6 @@
 name = "warp-api"
 main = "worker.ts"
-compatibility_date = "2026-04-19"
+compatibility_date = "2024-04-03"
 
 [observability]
 enabled = true
