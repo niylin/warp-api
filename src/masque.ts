@@ -1,5 +1,5 @@
 import { API_URL, API_VERSION, DEFAULT_HEADERS } from "./config";
-import { generateP256KeyPair } from "./crypto";
+import { generateP256KeyPair, cleanKey } from "./crypto";
 
 export async function enrollMasque(accountData: any) {
   const { publicKey, privateKey } = await generateP256KeyPair();
@@ -51,13 +51,14 @@ export function formatMasque(account: any): any {
 }
 
 export function formatMihomoMasque(account: any): string {
+  const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
   const config = {
-    name: "warp-masque",
+    name: `warp-masque-${timestamp}`,
     type: "masque",
-    server: "engage.cloudflareclient.com",
+    server: "masque.wdqgn.eu.org",
     port: 443,
-    "private-key": account.private_key,
-    "public-key": account.config.peers[0].public_key,
+    "private-key": cleanKey(account.private_key),
+    "public-key": cleanKey(account.config.peers[0].public_key),
     ip: account.config.interface.addresses.v4.includes("/") 
         ? account.config.interface.addresses.v4 
         : account.config.interface.addresses.v4 + "/32",
@@ -71,11 +72,14 @@ export function formatMihomoMasque(account: any): string {
 }
 
 function yamlStringify(obj: any): string {
-  return "- " + JSON.stringify(obj, null, 2)
-    .replace(/\{\n/, "")
-    .replace(/\n\}/, "")
-    .split("\n")
-    .map((line, i) => (i === 0 ? line.trim() : "  " + line.trim()))
-    .join("\n")
-    .replace(/"([^"]+)":/g, "$1:");
+  const lines = ["- name: " + obj.name];
+  const keys = Object.keys(obj).filter(k => k !== "name");
+  for (const key of keys) {
+    let value = obj[key];
+    if (typeof value === "string") {
+      value = `"${value}"`;
+    }
+    lines.push(`  ${key}: ${value}`);
+  }
+  return lines.join("\n");
 }

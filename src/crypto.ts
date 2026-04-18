@@ -44,3 +44,11 @@ export function generateRandomHex(bytes: number): string {
 function b64encode(buf: Uint8Array): string {
   return btoa(String.fromCharCode(...buf));
 }
+
+export function cleanKey(key: string): string {
+  if (!key) return "";
+  return key
+    .replace(/-----BEGIN [A-Z ]+-----/g, "")
+    .replace(/-----END [A-Z ]+-----/g, "")
+    .replace(/\s/g, "");
+}

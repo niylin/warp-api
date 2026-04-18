@@ -1,5 +1,5 @@
 import { API_URL, API_VERSION, DEFAULT_HEADERS } from "./config";
-import { generateX25519KeyPair, generateRandomHex } from "./crypto";
+import { generateX25519KeyPair, generateRandomHex, cleanKey } from "./crypto";
 
 export async function registerWarp(model: string, locale: string, jwt?: string) {
   const { publicKey, privateKey } = await generateX25519KeyPair();
@@ -56,15 +56,16 @@ Endpoint = ${account.config.peers[0].endpoint.host}:2408
 }
 
 export function formatMihomoWg(account: any): string {
+  const timestamp = new Date().toISOString().replace(/[-:T]/g, "").split(".")[0];
   const config = {
-    name: "warp-wg",
+    name: `warp-wg-${timestamp}`,
     type: "wireguard",
-    "private-key": account.private_key,
+    "private-key": cleanKey(account.private_key),
     server: account.config.peers[0].endpoint.host.split(":")[0],
     port: 2408,
     ip: account.config.interface.addresses.v4,
     ipv6: account.config.interface.addresses.v6,
-    "public-key": account.config.peers[0].public_key,
+    "public-key": cleanKey(account.config.peers[0].public_key),
     "allowed-ips": ["0.0.0.0/0", "::/0"],
     udp: true,
     mtu: 1280,
@@ -73,11 +74,16 @@ export function formatMihomoWg(account: any): string {
 }
 
 function yamlStringify(obj: any): string {
-  return "- " + JSON.stringify(obj, null, 2)
-    .replace(/\{\n/, "")
-    .replace(/\n\}/, "")
-    .split("\n")
-    .map((line, i) => (i === 0 ? line.trim() : "  " + line.trim()))
-    .join("\n")
-    .replace(/"([^"]+)":/g, "$1:");
+  const lines = ["- name: " + obj.name];
+  const keys = Object.keys(obj).filter(k => k !== "name");
+  for (const key of keys) {
+    let value = obj[key];
+    if (Array.isArray(value)) {
+      value = "[" + value.map(v => `"${v}"`).join(", ") + "]";
+    } else if (typeof value === "string") {
+      value = `"${value}"`;
+    }
+    lines.push(`  ${key}: ${value}`);
+  }
+  return lines.join("\n");
 }
