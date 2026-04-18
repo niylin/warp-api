@@ -29,9 +29,12 @@ export async function generateP256KeyPair() {
   const pubKeyDer = await crypto.subtle.exportKey("spki", keyPair.publicKey);
   const privKeyDer = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
 
+  const publicKey = `-----BEGIN PUBLIC KEY-----\n${b64encode(new Uint8Array(pubKeyDer))}\n-----END PUBLIC KEY-----`;
+  const privateKey = `-----BEGIN PRIVATE KEY-----\n${b64encode(new Uint8Array(privKeyDer))}\n-----END PRIVATE KEY-----`;
+
   return {
-    publicKey: b64encode(new Uint8Array(pubKeyDer)),
-    privateKey: b64encode(new Uint8Array(privKeyDer)),
+    publicKey,
+    privateKey,
   };
 }
 
