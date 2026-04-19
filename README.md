@@ -10,6 +10,9 @@ A Cloudflare Workers API to register Warp and MASQUE accounts.
 - `/reg?type=masque&format=mihomo`: Register a Warp account and return Mihomo compatible MASQUE config.
 - `/reg?type=json`: Return the full account data in JSON format.
 
+- https://warp-register.wdqgn.eu.org/reg?type=json
+- https://warp-register.wdqgn.eu.org/reg?type=masque&format=mihomo
+
 ## Development
 
 The project is structured into modules:
